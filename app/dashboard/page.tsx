@@ -144,16 +144,10 @@ export default async function DashboardPage() {
             </h2>
             <div className="space-y-2">
               <Link
-                href="/orders/new?type=DELIVERY"
+                href="/orders/new"
                 className="block w-full btn btn-primary text-center"
               >
-                Novo Pedido - Delivery
-              </Link>
-              <Link
-                href="/orders/new?type=MESA"
-                className="block w-full btn btn-secondary text-center"
-              >
-                Novo Pedido - Mesa
+                Novo Pedido
               </Link>
             </div>
           </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Layout } from "@/components/Layout";
-import { Plus, Minus, X, ShoppingCart } from "lucide-react";
+import { Plus, Minus, X, ShoppingCart, UtensilsCrossed, Home } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 
 type Dish = {
@@ -23,7 +23,7 @@ type CartItem = {
 export default function NewOrderPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const orderType = (searchParams.get("type") as "DELIVERY" | "MESA") || "MESA";
+  const orderType = (searchParams.get("type") as "DELIVERY" | "MESA") || null;
 
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
@@ -35,8 +35,11 @@ export default function NewOrderPage() {
   const [deliveryAddress, setDeliveryAddress] = useState("");
 
   useEffect(() => {
+    if (!orderType) {
+      return;
+    }
     fetchDishes();
-  }, []);
+  }, [orderType]);
 
   const fetchDishes = async () => {
     try {
@@ -125,6 +128,62 @@ export default function NewOrderPage() {
     }
   };
 
+  // Se não tiver tipo selecionado, mostrar tela de seleção
+  if (!orderType) {
+    return (
+      <Layout>
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="max-w-md w-full space-y-6">
+            <div className="text-center">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                Novo Pedido
+              </h1>
+              <p className="text-gray-600">
+                Selecione o tipo de pedido que deseja criar
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <button
+                onClick={() => router.push("/orders/new?type=MESA")}
+                className="card hover:shadow-lg transition-all hover:scale-105 cursor-pointer text-left"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="bg-blue-500 p-4 rounded-full mb-4">
+                    <Home className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Mesa
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Pedido para consumo no restaurante
+                  </p>
+                </div>
+              </button>
+
+              <button
+                onClick={() => router.push("/orders/new?type=DELIVERY")}
+                className="card hover:shadow-lg transition-all hover:scale-105 cursor-pointer text-left"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="bg-green-500 p-4 rounded-full mb-4">
+                    <UtensilsCrossed className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-2">
+                    Delivery
+                  </h3>
+                  <p className="text-sm text-gray-600">
+                    Pedido para entrega em domicílio
+                  </p>
+                </div>
+              </button>
+            </div>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   if (loading) {
     return (
       <Layout>
@@ -141,10 +200,10 @@ export default function NewOrderPage() {
             Novo Pedido - {orderType === "DELIVERY" ? "Delivery" : "Mesa"}
           </h1>
           <button
-            onClick={() => router.push("/dashboard")}
+            onClick={() => router.push("/orders/new")}
             className="btn btn-secondary"
           >
-            Cancelar
+            Voltar
           </button>
         </div>
 
@@ -330,4 +389,3 @@ export default function NewOrderPage() {
     </Layout>
   );
 }
-
