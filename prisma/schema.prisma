@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  GARCOM
+}
+
+enum OrderType {
+  DELIVERY
+  MESA
+}
+
+enum OrderStatus {
+  PENDENTE
+  EM_PREPARO
+  PRONTO
+  ENTREGUE
+  CANCELADO
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      UserRole @default(GARCOM)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  orders    Order[]
+}
+
+model Dish {
+  id          String     @id @default(cuid())
+  name        String
+  description String?
+  price       Float
+  image       String?
+  category    String?
+  available   Boolean    @default(true)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  orderItems  OrderItem[]
+}
+
+model Order {
+  id            String      @id @default(cuid())
+  orderNumber   String      @unique
+  type          OrderType
+  status        OrderStatus @default(PENDENTE)
+  customerName  String?
+  customerPhone String?
+  tableNumber   Int?
+  deliveryAddress String?
+  total         Float
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  items         OrderItem[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([createdAt])
+  @@index([status])
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  dishId    String
+  dish      Dish     @relation(fields: [dishId], references: [id])
+  quantity  Int
+  price     Float
+  notes     String?
+  createdAt DateTime @default(now())
+}
+
+model DailySummary {
+  id              String   @id @default(cuid())
+  date            DateTime @unique @db.Date
+  totalRevenue    Float
+  totalOrders     Int
+  deliveryOrders  Int
+  mesaOrders      Int
+  deliveryRevenue Float
+  mesaRevenue     Float
+  averageTicket   Float
+  closedAt        DateTime @default(now())
+  closedBy        String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([date])
+}
+
