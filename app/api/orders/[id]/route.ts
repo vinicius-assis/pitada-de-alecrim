@@ -27,7 +27,6 @@ export async function GET(
             dish: {
               select: {
                 name: true,
-                description: true,
               },
             },
           },

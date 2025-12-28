@@ -38,17 +38,14 @@ export async function PATCH(
     }
 
     const body = await request.json();
-    const { name, description, price, image, category, available } = body;
+    const { name, price, category } = body;
 
     const dish = await prisma.dish.update({
       where: { id: params.id },
       data: {
         ...(name && { name }),
-        ...(description !== undefined && { description }),
         ...(price && { price: parseFloat(price) }),
-        ...(image !== undefined && { image }),
         ...(category !== undefined && { category }),
-        ...(available !== undefined && { available }),
       },
     });
 

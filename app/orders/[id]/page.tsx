@@ -33,7 +33,6 @@ export default async function OrderDetailPage({
           dish: {
             select: {
               name: true,
-              description: true,
             },
           },
         },

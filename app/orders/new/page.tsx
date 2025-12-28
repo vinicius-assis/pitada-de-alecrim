@@ -9,9 +9,8 @@ import { formatCurrency } from "@/lib/utils";
 type Dish = {
   id: string;
   name: string;
-  description: string | null;
   price: number;
-  image: string | null;
+  category: string | null;
 };
 
 type CartItem = {
@@ -45,7 +44,7 @@ export default function NewOrderPage() {
     try {
       const res = await fetch("/api/dishes");
       const data = await res.json();
-      setDishes(data.filter((d: Dish) => d.available));
+      setDishes(data);
     } catch (error) {
       console.error("Error fetching dishes:", error);
     } finally {
