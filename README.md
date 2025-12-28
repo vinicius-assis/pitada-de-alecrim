@@ -5,7 +5,7 @@ Sistema interno de gestão para restaurante com controle de pedidos, pratos e ca
 ## Funcionalidades
 
 - ✅ Fazer pedido (Delivery e Mesa)
-- ✅ Cadastro de Pratos (CMS)
+- ✅ Cadastro de Items (CMS)
 - ✅ Alterar Pedido (Delivery e Mesa)
 - ✅ Ver histórico de pedidos
 - ✅ Ver detalhes do pedido
@@ -25,32 +25,38 @@ Sistema interno de gestão para restaurante com controle de pedidos, pratos e ca
 ## Instalação
 
 1. Instale as dependências:
+
 ```bash
 npm install
 ```
 
 2. Configure as variáveis de ambiente:
+
 ```bash
 cp .env.example .env
 ```
 
 Edite o arquivo `.env` e configure:
+
 - `DATABASE_URL`: URL de conexão do Supabase (formato: `postgresql://user:password@host:port/database?schema=public`)
 - `NEXTAUTH_SECRET`: Gere uma chave secreta (pode usar: `openssl rand -base64 32`)
 - `NEXTAUTH_URL`: URL da aplicação (ex: `http://localhost:3000`)
 
 3. Configure o banco de dados:
+
 ```bash
 npm run db:push
 npm run db:generate
 ```
 
 4. (Opcional) Popule o banco com dados de exemplo:
+
 ```bash
 npm run db:seed
 ```
 
 5. Execute o servidor de desenvolvimento:
+
 ```bash
 npm run dev
 ```
@@ -59,17 +65,19 @@ npm run dev
 
 ## Usuários Padrão (após seed)
 
-- **Administrador**: 
+- **Administrador**:
+
   - Email: `admin@restaurante.com`
   - Senha: `admin123`
 
-- **Garçom**: 
+- **Garçom**:
   - Email: `garcom@restaurante.com`
   - Senha: `garcom123`
 
 ## Funcionalidades Especiais
 
 ### Encerrar Expediente
+
 - Apenas administradores podem encerrar o expediente
 - Ao encerrar, o sistema:
   - Calcula todas as vendas do dia
@@ -78,6 +86,7 @@ npm run dev
   - Os dados consolidados ficam disponíveis para consulta histórica
 
 ### Marcar Prato como Indisponível
+
 - Na página de Pratos, clique no status do prato para alternar entre disponível/indisponível
 - Pratos indisponíveis não aparecem na tela de criar pedido
 
@@ -90,4 +99,3 @@ npm run dev
 - `npm run db:studio` - Abre Prisma Studio (interface visual do banco)
 - `npm run db:generate` - Gera Prisma Client
 - `npm run db:seed` - Popula o banco com dados de exemplo
-

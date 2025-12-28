@@ -166,11 +166,6 @@ export default async function OrderDetailPage({
                     <h4 className="font-medium text-gray-900">
                       {item.dish.name}
                     </h4>
-                    {item.dish.description && (
-                      <p className="text-sm text-gray-600 mt-1">
-                        {item.dish.description}
-                      </p>
-                    )}
                     {item.notes && (
                       <p className="text-sm text-primary-600 mt-1">
                         Observação: {item.notes}

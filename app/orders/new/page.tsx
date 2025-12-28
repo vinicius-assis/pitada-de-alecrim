@@ -207,7 +207,7 @@ export default function NewOrderPage() {
             </div>
 
             <div className="card">
-              <h2 className="text-xl font-bold text-gray-900 mb-4">Pratos</h2>
+              <h2 className="text-xl font-bold text-gray-900 mb-4">Items</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {dishes.map((dish) => (
                   <div
@@ -219,9 +219,6 @@ export default function NewOrderPage() {
                         <h3 className="font-semibold text-gray-900">
                           {dish.name}
                         </h3>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {dish.description}
-                        </p>
                       </div>
                       <span className="text-lg font-bold text-primary-600">
                         R$ {dish.price.toFixed(2)}

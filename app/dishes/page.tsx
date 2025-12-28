@@ -24,9 +24,7 @@ export default function DishesPage() {
   const [editingDish, setEditingDish] = useState<Dish | null>(null);
   const [formData, setFormData] = useState({
     name: "",
-    description: "",
     price: "",
-    image: "",
     category: "",
     available: true,
   });
@@ -52,11 +50,9 @@ export default function DishesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     try {
-      const url = editingDish
-        ? `/api/dishes/${editingDish.id}`
-        : "/api/dishes";
+      const url = editingDish ? `/api/dishes/${editingDish.id}` : "/api/dishes";
       const method = editingDish ? "PATCH" : "POST";
 
       const res = await fetch(url, {
@@ -74,11 +70,11 @@ export default function DishesPage() {
         setShowModal(false);
         resetForm();
       } else {
-        alert("Erro ao salvar prato");
+        alert("Erro ao salvar item");
       }
     } catch (error) {
       console.error("Error saving dish:", error);
-      alert("Erro ao salvar prato");
+      alert("Erro ao salvar item");
     }
   };
 
@@ -86,9 +82,7 @@ export default function DishesPage() {
     setEditingDish(dish);
     setFormData({
       name: dish.name,
-      description: dish.description || "",
       price: dish.price.toString(),
-      image: dish.image || "",
       category: dish.category || "",
       available: dish.available,
     });
@@ -108,16 +102,16 @@ export default function DishesPage() {
       if (res.ok) {
         fetchDishes();
       } else {
-        alert("Erro ao atualizar disponibilidade do prato");
+        alert("Erro ao atualizar disponibilidade do item");
       }
     } catch (error) {
       console.error("Error toggling availability:", error);
-      alert("Erro ao atualizar disponibilidade do prato");
+      alert("Erro ao atualizar disponibilidade do item");
     }
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Tem certeza que deseja excluir este prato?")) return;
+    if (!confirm("Tem certeza que deseja excluir este item?")) return;
 
     try {
       const res = await fetch(`/api/dishes/${id}`, {
@@ -127,20 +121,18 @@ export default function DishesPage() {
       if (res.ok) {
         fetchDishes();
       } else {
-        alert("Erro ao excluir prato");
+        alert("Erro ao excluir item");
       }
     } catch (error) {
       console.error("Error deleting dish:", error);
-      alert("Erro ao excluir prato");
+      alert("Erro ao excluir item");
     }
   };
 
   const resetForm = () => {
     setFormData({
       name: "",
-      description: "",
       price: "",
-      image: "",
       category: "",
       available: true,
     });
@@ -159,7 +151,9 @@ export default function DishesPage() {
     <Layout>
       <div className="space-y-6">
         <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">Cadastro de Pratos</h1>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Cadastro de Items
+          </h1>
           <button
             onClick={() => {
               resetForm();
@@ -168,7 +162,7 @@ export default function DishesPage() {
             className="btn btn-primary"
           >
             <Plus className="w-4 h-4 inline mr-2" />
-            Novo Prato
+            Novo Item
           </button>
         </div>
 
@@ -179,9 +173,6 @@ export default function DishesPage() {
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Nome
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Descrição
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Categoria
@@ -203,9 +194,6 @@ export default function DishesPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {dish.name}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                      {dish.description || "-"}
-                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {dish.category || "-"}
                     </td>
@@ -220,7 +208,11 @@ export default function DishesPage() {
                             ? "bg-green-100 text-green-800 hover:bg-green-200"
                             : "bg-red-100 text-red-800 hover:bg-red-200"
                         }`}
-                        title={dish.available ? "Marcar como indisponível" : "Marcar como disponível"}
+                        title={
+                          dish.available
+                            ? "Marcar como indisponível"
+                            : "Marcar como disponível"
+                        }
                       >
                         {dish.available ? (
                           <>
@@ -240,14 +232,14 @@ export default function DishesPage() {
                         <button
                           onClick={() => handleEdit(dish)}
                           className="text-blue-600 hover:text-blue-900"
-                          title="Editar prato"
+                          title="Editar item"
                         >
                           <Edit className="w-5 h-5" />
                         </button>
                         <button
                           onClick={() => handleDelete(dish.id)}
                           className="text-red-600 hover:text-red-900"
-                          title="Excluir prato"
+                          title="Excluir item"
                         >
                           <Trash2 className="w-5 h-5" />
                         </button>
@@ -259,7 +251,7 @@ export default function DishesPage() {
             </table>
             {dishes.length === 0 && (
               <div className="text-center py-8 text-gray-500">
-                Nenhum prato cadastrado
+                Nenhum item cadastrado
               </div>
             )}
           </div>
@@ -270,7 +262,7 @@ export default function DishesPage() {
             <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="text-xl font-bold text-gray-900">
-                  {editingDish ? "Editar Prato" : "Novo Prato"}
+                  {editingDish ? "Editar Item" : "Novo Item"}
                 </h2>
                 <button
                   onClick={() => {
@@ -295,19 +287,6 @@ export default function DishesPage() {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Descrição
-                  </label>
-                  <textarea
-                    className="input"
-                    rows={3}
-                    value={formData.description}
-                    onChange={(e) =>
-                      setFormData({ ...formData, description: e.target.value })
-                    }
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -340,19 +319,6 @@ export default function DishesPage() {
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    URL da Imagem
-                  </label>
-                  <input
-                    type="url"
-                    className="input"
-                    value={formData.image}
-                    onChange={(e) =>
-                      setFormData({ ...formData, image: e.target.value })
-                    }
-                  />
-                </div>
                 <div className="flex items-center">
                   <input
                     type="checkbox"
@@ -363,7 +329,10 @@ export default function DishesPage() {
                       setFormData({ ...formData, available: e.target.checked })
                     }
                   />
-                  <label htmlFor="available" className="ml-2 text-sm text-gray-700">
+                  <label
+                    htmlFor="available"
+                    className="ml-2 text-sm text-gray-700"
+                  >
                     Disponível
                   </label>
                 </div>
@@ -390,4 +359,3 @@ export default function DishesPage() {
     </Layout>
   );
 }
-

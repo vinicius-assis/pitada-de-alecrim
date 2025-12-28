@@ -18,7 +18,7 @@ export function Navbar() {
     { href: "/orders/new", label: "Novo Pedido", icon: Utensils },
     { href: "/orders", label: "Histórico", icon: History },
     { href: "/cashier", label: "Caixa", icon: DollarSign },
-    ...(isAdmin ? [{ href: "/dishes", label: "Pratos", icon: Settings }] : []),
+    ...(isAdmin ? [{ href: "/dishes", label: "Items", icon: Settings }] : []),
   ];
 
   return (
