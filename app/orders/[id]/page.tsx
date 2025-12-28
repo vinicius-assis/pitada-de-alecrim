@@ -7,6 +7,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function OrderDetailPage({
   params,
@@ -172,12 +173,12 @@ export default async function OrderDetailPage({
                       </p>
                     )}
                     <p className="text-sm text-gray-500 mt-1">
-                      Quantidade: {item.quantity} x R$ {item.price.toFixed(2)}
+                      Quantidade: {item.quantity} x {formatCurrency(item.price)}
                     </p>
                   </div>
                   <div className="text-right">
                     <p className="font-bold text-gray-900">
-                      R$ {(item.price * item.quantity).toFixed(2)}
+                      {formatCurrency(item.price * item.quantity)}
                     </p>
                   </div>
                 </div>
@@ -186,7 +187,7 @@ export default async function OrderDetailPage({
             <div className="mt-6 pt-6 border-t flex justify-between items-center">
               <span className="text-xl font-bold text-gray-900">Total:</span>
               <span className="text-2xl font-bold text-primary-600">
-                R$ {order.total.toFixed(2)}
+                {formatCurrency(order.total)}
               </span>
             </div>
           </div>

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { Eye, Edit } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 type SearchParams = {
   status?: string;
@@ -168,7 +169,7 @@ export default async function OrdersPage({
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      R$ {order.total.toFixed(2)}
+                      {formatCurrency(order.total)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {format(new Date(order.createdAt), "dd/MM/yyyy HH:mm", {

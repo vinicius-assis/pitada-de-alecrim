@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Layout } from "@/components/Layout";
 import { Plus, Minus, X, ShoppingCart } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 type Dish = {
   id: string;
@@ -221,7 +222,7 @@ export default function NewOrderPage() {
                         </h3>
                       </div>
                       <span className="text-lg font-bold text-primary-600">
-                        R$ {dish.price.toFixed(2)}
+                        {formatCurrency(dish.price)}
                       </span>
                     </div>
                     <button
@@ -267,7 +268,7 @@ export default function NewOrderPage() {
                             {item.dish.name}
                           </h4>
                           <p className="text-sm text-gray-600">
-                            R$ {item.dish.price.toFixed(2)} cada
+                            {formatCurrency(item.dish.price)} cada
                           </p>
                         </div>
                         <button
@@ -299,7 +300,7 @@ export default function NewOrderPage() {
                           </button>
                         </div>
                         <span className="font-bold text-gray-900">
-                          R$ {(item.dish.price * item.quantity).toFixed(2)}
+                          {formatCurrency(item.dish.price * item.quantity)}
                         </span>
                       </div>
                     </div>
@@ -311,7 +312,7 @@ export default function NewOrderPage() {
                 <div className="flex justify-between items-center mb-4">
                   <span className="text-lg font-bold text-gray-900">Total:</span>
                   <span className="text-2xl font-bold text-primary-600">
-                    R$ {total.toFixed(2)}
+                    {formatCurrency(total)}
                   </span>
                 </div>
                 <button

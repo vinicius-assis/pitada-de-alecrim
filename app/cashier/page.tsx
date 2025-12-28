@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { format, startOfDay, endOfDay, startOfMonth, endOfMonth, startOfQuarter, endOfQuarter, startOfYear, endOfYear } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
 import { DollarSign, TrendingUp, Calendar } from "lucide-react";
+import { formatCurrency } from "@/lib/utils";
 
 type SearchParams = {
   period?: string;
@@ -244,7 +245,7 @@ export default async function CashierPage({
               <div>
                 <p className="text-sm font-medium text-gray-600">Receita Total</p>
                 <p className="text-2xl font-bold text-gray-900 mt-2">
-                  R$ {totalRevenue.toFixed(2)}
+                  {formatCurrency(totalRevenue)}
                 </p>
               </div>
               <div className="bg-green-500 p-3 rounded-lg">
@@ -272,7 +273,7 @@ export default async function CashierPage({
               <div>
                 <p className="text-sm font-medium text-gray-600">Ticket Médio</p>
                 <p className="text-2xl font-bold text-gray-900 mt-2">
-                  R$ {avgOrder.toFixed(2)}
+                  {formatCurrency(avgOrder)}
                 </p>
               </div>
               <div className="bg-purple-500 p-3 rounded-lg">
@@ -286,7 +287,7 @@ export default async function CashierPage({
               <div>
                 <p className="text-sm font-medium text-gray-600">Delivery</p>
                 <p className="text-2xl font-bold text-gray-900 mt-2">
-                  R$ {deliveryRevenue.toFixed(2)}
+                  {formatCurrency(deliveryRevenue)}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   {deliveryOrdersCount} pedidos
@@ -306,7 +307,7 @@ export default async function CashierPage({
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-medium text-gray-700">Delivery</span>
                   <span className="text-sm font-bold text-gray-900">
-                    R$ {deliveryRevenue.toFixed(2)}
+                    {formatCurrency(deliveryRevenue)}
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -326,7 +327,7 @@ export default async function CashierPage({
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-sm font-medium text-gray-700">Mesa</span>
                   <span className="text-sm font-bold text-gray-900">
-                    R$ {mesaRevenue.toFixed(2)}
+                    {formatCurrency(mesaRevenue)}
                   </span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
@@ -365,7 +366,7 @@ export default async function CashierPage({
                       </p>
                     </div>
                     <p className="text-sm font-bold text-gray-900">
-                      R$ {order.total.toFixed(2)}
+                      {formatCurrency(order.total)}
                     </p>
                   </div>
                 ))

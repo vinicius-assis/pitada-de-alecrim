@@ -5,6 +5,11 @@ import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Layout } from "@/components/Layout";
 import { Plus, Edit, Trash2, X, Eye, EyeOff } from "lucide-react";
+import {
+  formatCurrency,
+  formatCurrencyInput,
+  parseCurrencyInput,
+} from "@/lib/utils";
 
 type Dish = {
   id: string;
@@ -60,7 +65,7 @@ export default function DishesPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          price: parseFloat(formData.price),
+          price: parseCurrencyInput(formData.price),
           available: formData.available,
         }),
       });
@@ -82,7 +87,7 @@ export default function DishesPage() {
     setEditingDish(dish);
     setFormData({
       name: dish.name,
-      price: dish.price.toString(),
+      price: formatCurrency(dish.price),
       category: dish.category || "",
       available: dish.available,
     });
@@ -198,7 +203,7 @@ export default function DishesPage() {
                       {dish.category || "-"}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      R$ {dish.price.toFixed(2)}
+                      {formatCurrency(dish.price)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <button
@@ -295,13 +300,14 @@ export default function DishesPage() {
                       Preço *
                     </label>
                     <input
-                      type="number"
-                      step="0.01"
+                      type="text"
                       className="input"
                       value={formData.price}
-                      onChange={(e) =>
-                        setFormData({ ...formData, price: e.target.value })
-                      }
+                      onChange={(e) => {
+                        const formatted = formatCurrencyInput(e.target.value);
+                        setFormData({ ...formData, price: formatted });
+                      }}
+                      placeholder="0,00"
                       required
                     />
                   </div>

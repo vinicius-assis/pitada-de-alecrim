@@ -7,6 +7,7 @@ import { Utensils, DollarSign, Clock, CheckCircle } from "lucide-react";
 import { startOfDay, endOfDay } from "date-fns";
 import Link from "next/link";
 import { CloseShiftButton } from "@/components/CloseShiftButton";
+import { formatCurrency } from "@/lib/utils";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -75,7 +76,7 @@ export default async function DashboardPage() {
     },
     {
       title: "Receita Hoje",
-      value: `R$ ${(todayRevenue._sum.total || 0).toFixed(2)}`,
+      value: formatCurrency(todayRevenue._sum.total || 0),
       icon: DollarSign,
       color: "bg-green-500",
       href: "/cashier",
