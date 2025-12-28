@@ -50,14 +50,14 @@ export default async function DashboardPage() {
             gte: start,
             lte: end,
           },
-          status: {
-            in: ["PENDENTE", "EM_PREPARO"],
-          },
+          status: "ABERTO",
         },
       }),
       prisma.order.count({
         where: {
-          status: "ENTREGUE",
+          status: {
+            in: ["FECHADO", "DELIVERY"],
+          },
           createdAt: {
             gte: start,
             lte: end,
@@ -82,18 +82,18 @@ export default async function DashboardPage() {
       href: "/cashier",
     },
     {
-      title: "Pendentes",
+      title: "Abertos",
       value: pendingOrders,
       icon: Clock,
       color: "bg-yellow-500",
-      href: "/orders?status=pending",
+      href: "/orders",
     },
     {
-      title: "Concluídos Hoje",
+      title: "Fechados/Delivery Hoje",
       value: completedOrders,
       icon: CheckCircle,
       color: "bg-primary-500",
-      href: "/orders?status=completed",
+      href: "/orders",
     },
   ];
 

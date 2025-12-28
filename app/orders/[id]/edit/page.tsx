@@ -6,14 +6,14 @@ import { Layout } from "@/components/Layout";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
 
-type OrderStatus = "PENDENTE" | "EM_PREPARO" | "PRONTO" | "ENTREGUE" | "CANCELADO";
+type OrderStatus = "ABERTO" | "FECHADO" | "DELIVERY" | "CANCELADO";
 
 export default function EditOrderPage() {
   const router = useRouter();
   const params = useParams();
   const orderId = params?.id as string;
   const [order, setOrder] = useState<any>(null);
-  const [status, setStatus] = useState<OrderStatus>("PENDENTE");
+  const [status, setStatus] = useState<OrderStatus>("ABERTO");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [customerName, setCustomerName] = useState("");
@@ -109,22 +109,39 @@ export default function EditOrderPage() {
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Status do Pedido
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as OrderStatus)}
-                className="input"
-              >
-                <option value="PENDENTE">Pendente</option>
-                <option value="EM_PREPARO">Em Preparo</option>
-                <option value="PRONTO">Pronto</option>
-                <option value="ENTREGUE">Entregue</option>
-                <option value="CANCELADO">Cancelado</option>
-              </select>
-            </div>
+            {order.type === "MESA" ? (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status do Pedido
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as OrderStatus)}
+                  className="input"
+                >
+                  <option value="ABERTO">Aberto</option>
+                  <option value="FECHADO">Fechado</option>
+                  <option value="CANCELADO">Cancelado</option>
+                </select>
+              </div>
+            ) : (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Status do Pedido
+                </label>
+                <select
+                  value={status}
+                  onChange={(e) => setStatus(e.target.value as OrderStatus)}
+                  className="input"
+                  disabled
+                >
+                  <option value="DELIVERY">Delivery</option>
+                </select>
+                <p className="text-sm text-gray-500 mt-1">
+                  Pedidos de delivery não podem ter o status alterado
+                </p>
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>

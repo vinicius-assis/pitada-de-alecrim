@@ -4,37 +4,30 @@ import { authOptions } from "@/lib/auth";
 import { Layout } from "@/components/Layout";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale/pt-BR";
-import { Eye, Edit } from "lucide-react";
+import { Eye, Edit, X } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import { CloseOrderButton } from "@/components/CloseOrderButton";
 
-type SearchParams = {
-  status?: string;
-};
-
-export default async function OrdersPage({
-  searchParams,
-}: {
-  searchParams: Promise<SearchParams>;
-}) {
+export default async function OrdersPage() {
   const session = await getServerSession(authOptions);
 
   if (!session) {
     redirect("/login");
   }
 
-  const params = await searchParams;
-  const statusFilter = params.status
-    ? searchParams.status === "pending"
-      ? { in: ["PENDENTE", "EM_PREPARO"] }
-      : searchParams.status === "completed"
-      ? "ENTREGUE"
-      : undefined
-    : undefined;
+  const today = new Date();
+  const start = startOfDay(today);
+  const end = endOfDay(today);
 
   const orders = await prisma.order.findMany({
-    where: statusFilter ? { status: statusFilter as any } : undefined,
+    where: {
+      createdAt: {
+        gte: start,
+        lte: end,
+      },
+    },
     include: {
       user: {
         select: {
@@ -57,16 +50,14 @@ export default async function OrdersPage({
     take: 50,
   });
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string, type: string) => {
     switch (status) {
-      case "PENDENTE":
-        return "bg-yellow-100 text-yellow-800";
-      case "EM_PREPARO":
-        return "bg-blue-100 text-blue-800";
-      case "PRONTO":
+      case "ABERTO":
         return "bg-green-100 text-green-800";
-      case "ENTREGUE":
+      case "FECHADO":
         return "bg-gray-100 text-gray-800";
+      case "DELIVERY":
+        return "bg-blue-100 text-blue-800";
       case "CANCELADO":
         return "bg-red-100 text-red-800";
       default:
@@ -74,45 +65,23 @@ export default async function OrdersPage({
     }
   };
 
+  const getStatusLabel = (status: string, type: string) => {
+    if (type === "DELIVERY") {
+      return "Delivery";
+    }
+    return status;
+  };
+
   return (
     <Layout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
+        <div>
           <h1 className="text-3xl font-bold text-gray-900">
-            Histórico de Pedidos
+            Pedidos do Dia
           </h1>
-          <div className="flex space-x-2">
-            <Link
-              href="/orders"
-              className={`btn ${
-                !params.status
-                  ? "btn-primary"
-                  : "btn-secondary"
-              }`}
-            >
-              Todos
-            </Link>
-            <Link
-              href="/orders?status=pending"
-              className={`btn ${
-                params.status === "pending"
-                  ? "btn-primary"
-                  : "btn-secondary"
-              }`}
-            >
-              Pendentes
-            </Link>
-            <Link
-              href="/orders?status=completed"
-              className={`btn ${
-                params.status === "completed"
-                  ? "btn-primary"
-                  : "btn-secondary"
-              }`}
-            >
-              Concluídos
-            </Link>
-          </div>
+          <p className="mt-2 text-gray-600">
+            {format(today, "dd 'de' MMMM 'de' yyyy", { locale: ptBR })}
+          </p>
         </div>
 
         <div className="card">
@@ -162,10 +131,11 @@ export default async function OrdersPage({
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span
                         className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(
-                          order.status
+                          order.status,
+                          order.type
                         )}`}
                       >
-                        {order.status}
+                        {getStatusLabel(order.status, order.type)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
@@ -181,15 +151,20 @@ export default async function OrdersPage({
                         <Link
                           href={`/orders/${order.id}`}
                           className="text-primary-600 hover:text-primary-900"
+                          title="Ver detalhes"
                         >
                           <Eye className="w-5 h-5" />
                         </Link>
                         <Link
                           href={`/orders/${order.id}/edit`}
                           className="text-blue-600 hover:text-blue-900"
+                          title="Editar pedido"
                         >
                           <Edit className="w-5 h-5" />
                         </Link>
+                        {order.type === "MESA" && order.status === "ABERTO" && (
+                          <CloseOrderButton orderId={order.id} />
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -198,7 +173,7 @@ export default async function OrdersPage({
             </table>
             {orders.length === 0 && (
               <div className="text-center py-8 text-gray-500">
-                Nenhum pedido encontrado
+                Nenhum pedido encontrado para hoje
               </div>
             )}
           </div>

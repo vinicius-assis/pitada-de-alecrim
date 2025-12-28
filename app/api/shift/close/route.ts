@@ -16,7 +16,7 @@ export async function POST() {
     const start = startOfDay(today);
     const end = endOfDay(today);
 
-    // Buscar todos os pedidos do dia (apenas entregues ou prontos)
+    // Buscar todos os pedidos do dia (fechados ou delivery)
     const orders = await prisma.order.findMany({
       where: {
         createdAt: {
@@ -24,7 +24,7 @@ export async function POST() {
           lte: end,
         },
         status: {
-          in: ["ENTREGUE", "PRONTO"],
+          in: ["FECHADO", "DELIVERY"],
         },
       },
       include: {

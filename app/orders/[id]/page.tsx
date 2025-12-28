@@ -54,21 +54,26 @@ export default async function OrderDetailPage({
     );
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string, type: string) => {
     switch (status) {
-      case "PENDENTE":
-        return "bg-yellow-100 text-yellow-800";
-      case "EM_PREPARO":
-        return "bg-blue-100 text-blue-800";
-      case "PRONTO":
+      case "ABERTO":
         return "bg-green-100 text-green-800";
-      case "ENTREGUE":
+      case "FECHADO":
         return "bg-gray-100 text-gray-800";
+      case "DELIVERY":
+        return "bg-blue-100 text-blue-800";
       case "CANCELADO":
         return "bg-red-100 text-red-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
+  };
+
+  const getStatusLabel = (status: string, type: string) => {
+    if (type === "DELIVERY") {
+      return "Delivery";
+    }
+    return status;
   };
 
   return (
@@ -96,10 +101,11 @@ export default async function OrderDetailPage({
             </div>
             <span
               className={`px-4 py-2 inline-flex text-sm leading-5 font-semibold rounded-full ${getStatusColor(
-                order.status
+                order.status,
+                order.type
               )}`}
             >
-              {order.status}
+              {getStatusLabel(order.status, order.type)}
             </span>
           </div>
 

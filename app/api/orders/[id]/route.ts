@@ -63,10 +63,27 @@ export async function PATCH(
     const body = await request.json();
     const { status, customerName, customerPhone, tableNumber, deliveryAddress } = body;
 
+    // Verificar se o pedido existe
+    const existingOrder = await prisma.order.findUnique({
+      where: { id: params.id },
+    });
+
+    if (!existingOrder) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 });
+    }
+
+    // Se for delivery, não pode mudar o status
+    if (existingOrder.type === "DELIVERY" && status && status !== "DELIVERY") {
+      return NextResponse.json(
+        { error: "Pedidos de delivery não podem ter o status alterado" },
+        { status: 400 }
+      );
+    }
+
     const order = await prisma.order.update({
       where: { id: params.id },
       data: {
-        ...(status && { status }),
+        ...(status && existingOrder.type === "MESA" && { status }),
         ...(customerName !== undefined && { customerName }),
         ...(customerPhone !== undefined && { customerPhone }),
         ...(tableNumber !== undefined && { tableNumber }),

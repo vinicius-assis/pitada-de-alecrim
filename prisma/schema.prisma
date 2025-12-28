@@ -22,10 +22,9 @@ enum OrderType {
 }
 
 enum OrderStatus {
-  PENDENTE
-  EM_PREPARO
-  PRONTO
-  ENTREGUE
+  ABERTO
+  FECHADO
+  DELIVERY
   CANCELADO
 }
 
@@ -43,9 +42,7 @@ model User {
 model Dish {
   id          String     @id @default(cuid())
   name        String
-  description String?
   price       Float
-  image       String?
   category    String?
   available   Boolean    @default(true)
   createdAt   DateTime   @default(now())
@@ -57,7 +54,7 @@ model Order {
   id            String      @id @default(cuid())
   orderNumber   String      @unique
   type          OrderType
-  status        OrderStatus @default(PENDENTE)
+  status        OrderStatus @default(ABERTO)
   customerName  String?
   customerPhone String?
   tableNumber   Int?

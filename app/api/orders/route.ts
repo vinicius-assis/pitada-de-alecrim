@@ -76,6 +76,7 @@ export async function POST(request: Request) {
       data: {
         orderNumber,
         type,
+        status: type === "DELIVERY" ? "DELIVERY" : "ABERTO",
         customerName,
         customerPhone,
         tableNumber,
