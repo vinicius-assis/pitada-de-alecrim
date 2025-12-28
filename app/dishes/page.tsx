@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import { Layout } from "@/components/Layout";
-import { Plus, Edit, Trash2, X, Eye, EyeOff } from "lucide-react";
+import { Plus, Edit, Trash2, X } from "lucide-react";
 import {
   formatCurrency,
   formatCurrencyInput,
@@ -31,7 +31,6 @@ export default function DishesPage() {
     name: "",
     price: "",
     category: "",
-    available: true,
   });
 
   useEffect(() => {
@@ -60,13 +59,18 @@ export default function DishesPage() {
       const url = editingDish ? `/api/dishes/${editingDish.id}` : "/api/dishes";
       const method = editingDish ? "PATCH" : "POST";
 
+      // Se for acompanhamento, preço é 0
+      const finalPrice =
+        formData.category === "Acompanhamento"
+          ? 0
+          : parseCurrencyInput(formData.price);
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          price: parseCurrencyInput(formData.price),
-          available: formData.available,
+          price: finalPrice,
         }),
       });
 
@@ -85,34 +89,14 @@ export default function DishesPage() {
 
   const handleEdit = (dish: Dish) => {
     setEditingDish(dish);
+    const category = dish.category || "";
     setFormData({
       name: dish.name,
-      price: formatCurrency(dish.price),
-      category: dish.category || "",
-      available: dish.available,
+      price:
+        category === "Acompanhamento" ? "0,00" : formatCurrency(dish.price),
+      category: category,
     });
     setShowModal(true);
-  };
-
-  const handleToggleAvailability = async (dish: Dish) => {
-    try {
-      const res = await fetch(`/api/dishes/${dish.id}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          available: !dish.available,
-        }),
-      });
-
-      if (res.ok) {
-        fetchDishes();
-      } else {
-        alert("Erro ao atualizar disponibilidade do item");
-      }
-    } catch (error) {
-      console.error("Error toggling availability:", error);
-      alert("Erro ao atualizar disponibilidade do item");
-    }
   };
 
   const handleDelete = async (id: string) => {
@@ -139,7 +123,6 @@ export default function DishesPage() {
       name: "",
       price: "",
       category: "",
-      available: true,
     });
     setEditingDish(null);
   };
@@ -186,9 +169,6 @@ export default function DishesPage() {
                     Preço
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Ações
                   </th>
                 </tr>
@@ -204,33 +184,6 @@ export default function DishesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                       {formatCurrency(dish.price)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => handleToggleAvailability(dish)}
-                        className={`px-2 py-1 inline-flex items-center text-xs leading-5 font-semibold rounded-full transition-colors ${
-                          dish.available
-                            ? "bg-green-100 text-green-800 hover:bg-green-200"
-                            : "bg-red-100 text-red-800 hover:bg-red-200"
-                        }`}
-                        title={
-                          dish.available
-                            ? "Marcar como indisponível"
-                            : "Marcar como disponível"
-                        }
-                      >
-                        {dish.available ? (
-                          <>
-                            <Eye className="w-4 h-4 mr-1" />
-                            Disponível
-                          </>
-                        ) : (
-                          <>
-                            <EyeOff className="w-4 h-4 mr-1" />
-                            Indisponível
-                          </>
-                        )}
-                      </button>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                       <div className="flex space-x-2">
@@ -294,53 +247,61 @@ export default function DishesPage() {
                     required
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Preço *
-                    </label>
-                    <input
-                      type="text"
-                      className="input"
-                      value={formData.price}
-                      onChange={(e) => {
-                        const formatted = formatCurrencyInput(e.target.value);
-                        setFormData({ ...formData, price: formatted });
-                      }}
-                      placeholder="0,00"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Categoria
-                    </label>
-                    <input
-                      type="text"
-                      className="input"
-                      value={formData.category}
-                      onChange={(e) =>
-                        setFormData({ ...formData, category: e.target.value })
-                      }
-                    />
-                  </div>
-                </div>
-                <div className="flex items-center">
-                  <input
-                    type="checkbox"
-                    id="available"
-                    className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
-                    checked={formData.available}
-                    onChange={(e) =>
-                      setFormData({ ...formData, available: e.target.checked })
-                    }
-                  />
-                  <label
-                    htmlFor="available"
-                    className="ml-2 text-sm text-gray-700"
-                  >
-                    Disponível
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Categoria *
                   </label>
+                  <select
+                    className="input"
+                    value={formData.category}
+                    onChange={(e) => {
+                      const newCategory = e.target.value;
+                      setFormData({
+                        ...formData,
+                        category: newCategory,
+                        // Limpar preço se mudar para Acompanhamento, manter se mudar de Acompanhamento
+                        price:
+                          newCategory === "Acompanhamento"
+                            ? "0,00"
+                            : formData.category === "Acompanhamento"
+                            ? ""
+                            : formData.price,
+                      });
+                    }}
+                    required
+                  >
+                    <option value="">Selecione uma categoria</option>
+                    <option value="Bebidas">Bebidas</option>
+                    <option value="Tipo de Carnes">Tipo de Carnes</option>
+                    <option value="Acompanhamento">Acompanhamento</option>
+                    <option value="Outros">Outros</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Preço {formData.category !== "Acompanhamento" ? "*" : ""}
+                  </label>
+                  <input
+                    type="text"
+                    className="input"
+                    value={
+                      formData.category === "Acompanhamento"
+                        ? "0,00"
+                        : formData.price
+                    }
+                    onChange={(e) => {
+                      const formatted = formatCurrencyInput(e.target.value);
+                      setFormData({ ...formData, price: formatted });
+                    }}
+                    placeholder="0,00"
+                    disabled={formData.category === "Acompanhamento"}
+                    required={formData.category !== "Acompanhamento"}
+                  />
+                  {formData.category === "Acompanhamento" && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      Acompanhamentos não têm preço
+                    </p>
+                  )}
                 </div>
                 <div className="flex justify-end space-x-4">
                   <button
