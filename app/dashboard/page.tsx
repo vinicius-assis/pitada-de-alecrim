@@ -6,7 +6,6 @@ import { prisma } from "@/lib/prisma";
 import { Utensils, DollarSign, Clock, CheckCircle } from "lucide-react";
 import { startOfDay, endOfDay } from "date-fns";
 import Link from "next/link";
-import { CloseShiftButton } from "@/components/CloseShiftButton";
 import { formatCurrency } from "@/lib/utils";
 
 export default async function DashboardPage() {
@@ -107,7 +106,28 @@ export default async function DashboardPage() {
               Bem-vindo, {session.user?.name}!
             </p>
           </div>
-          <CloseShiftButton />
+          {/* Desktop: Novo Pedido no topo direito */}
+          <div className="hidden md:block">
+            <Link href="/orders/new" className="btn btn-primary">
+              <Utensils className="w-4 h-4 inline mr-2" />
+              Novo Pedido
+            </Link>
+          </div>
+        </div>
+
+        {/* Mobile: Ações Rápidas */}
+        <div className="card md:hidden">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">
+            Ações Rápidas
+          </h2>
+          <div className="space-y-2">
+            <Link
+              href="/orders/new"
+              className="block w-full btn btn-primary text-center"
+            >
+              Novo Pedido
+            </Link>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -137,29 +157,11 @@ export default async function DashboardPage() {
           })}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="card">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Ações Rápidas
-            </h2>
-            <div className="space-y-2">
-              <Link
-                href="/orders/new"
-                className="block w-full btn btn-primary text-center"
-              >
-                Novo Pedido
-              </Link>
-            </div>
-          </div>
-
-          <div className="card">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">
-              Informações
-            </h2>
-            <p className="text-gray-600">
-              Use o menu acima para navegar pelas funcionalidades do sistema.
-            </p>
-          </div>
+        <div className="card">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Informações</h2>
+          <p className="text-gray-600">
+            Use o menu acima para navegar pelas funcionalidades do sistema.
+          </p>
         </div>
       </div>
     </Layout>
